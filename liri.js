@@ -6,42 +6,17 @@ var keys = require("./keys.js");
 //Initialize Spotify
 var Spotify = require('node-spotify-api');
 var spotify = new Spotify(keys.spotify);
-//s.searchTracks()...
-
-//var bandsintown = require('bandsintown')(APP_ID);
-
+//Initialize axios
 var axios = require("axios");
+
+var moment= require('moment');
 
 var searchTerm = process.argv[3];
 var request = process.argv[2];
 
-//function searchInput(request, searchTerm) {
 
 
-/*switch (request) {
-  case "spotify-this-song":
-    spotify();
-    break;
-   case "movie-this":
-    movie();
-    break;
-  case "concert-this":
-    band();
-    break;*/
 
-//}
-  /*case 3:
-    day = "Wednesday";
-    break;
-  case 4:
-    day = "Thursday";
-    break;
-  case 5:
-    day = "Friday";
-    break;
-  case 6:
-    day = "Saturday";
-}*/
 
 if (process.argv[2]=="movie-this"){
   console.log(process.argv[2] , process.argv[3]);
@@ -67,17 +42,6 @@ function movie(){
  );
   }
 
-
-
-/*if (process.argv[2]=== "spotify-this-song" && (process.argv[3]=== "")
-  {
-    execute code block 1
-  }
-else if(condition2)
-  {
-    execute code block 2
-  } */
-//spotify.search({ type: 'process.argv[3]', query: 'process.argv[2]' }, function(err, data) {
   function spotifySong(){
  spotify.search({ type: 'track', query: process.argv[3] }, function(err, data) {
    if (err) {
@@ -94,8 +58,6 @@ else if(condition2)
     console.log("The album name is: " +data.tracks.items[0].album.name);
    }
  
-
- 
  });
   }
   if (process.argv[2]=="concert-this"){
@@ -110,19 +72,35 @@ else if(condition2)
   console.log(searchTerm);
    axios.get("https://rest.bandsintown.com/artists/" + searchTerm + "/events?app_id=" + keys.bandsintown.id).then(
      function(response) {
-       // Then we print out the imdbRating
-       //console.log(response);
-       //console.log(response.data[0].venue);
+      for (i=0; i < response.data.length; i++ ) {
+
+       var date = moment(response.data[0].datetime).format("dddd, MMMM Do YYYY, h:mm:ss a");
        console.log("The concert venue is: " + response.data[0].venue.name);
        console.log("The concert location: " + response.data[0].venue.city);
-       console.log("The concert date is: " + response.data[0].datetime);
-      //  console.log("The venue location is " + response.data.imdbRating);
-      //  console.log("The date of the event is: " + response.date);
-      //  console.log("The movie's language is: " + response.data.Language);
-      //  console.log("The movie's plot is: " + response.data.Plot);
-      //  console.log("The movie's actors are: " + response.data.Actors);
-     
+       console.log("The concert date is: " + date);
      }
+    }
    );
     }
 
+    if (request == "movie-this" && searchTerm == undefined) {
+      searchTerm = "Mr. Nobody"
+    }
+    
+    if (request == "spotify-this-song" && searchTerm == undefined) {
+      searchTerm = "The Sign Ace of Base"
+    }
+    
+if (request === "do-what-it-says"){
+  fs.readFile("random.txt", "utf8", function(error,data){
+
+    //if (error) {
+    //    return console.log(error);
+    //}
+    console.log(data);
+    
+    var dataArr = data.split(",");
+    
+    console.log(dataArr);
+    });
+}
